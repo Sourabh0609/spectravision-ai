@@ -16,6 +16,8 @@ app = Flask(__name__,
 
 app.config['UPLOAD_FOLDER'] = str(ROOT_DIR / 'static' / 'uploads')
 app.config['RESULT_FOLDER'] = str(ROOT_DIR / 'static' / 'results')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs(app.config['RESULT_FOLDER'], exist_ok=True)
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
 
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'bmp', 'webp'}
