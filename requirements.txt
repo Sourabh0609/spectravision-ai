@@ -39,9 +39,8 @@ scipy==1.17.1
 setuptools==81.0.0
 sympy==1.14.0
 tifffile==2026.5.2
-torch==2.11.0
-torchvision==0.26.0
 tqdm==4.67.3
 typing_extensions==4.15.0
 urllib3==2.7.0
 Werkzeug==3.1.8
+    

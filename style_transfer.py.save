@@ -1,0 +1,66 @@
+import cv2
+import numpy as np
+
+def apply_style_transfer(input_path, output_path, style='pencil'):
+    # Load the input image (works for both B&W and Color)
+    image = cv2.imread(input_path)
+    
+    # If image is grayscale (2D), convert to BGR (3 channels)
+    if len(image.shape) == 2:
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+    
+    # Now apply filters (these work on color images)
+    if style == 'pencil':
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        inverted = cv2.bitwise_not(gray)
+        blurred = cv2.GaussianBlur(inverted, (21, 21), 0)
+        inverted_blur = cv2.bitwise_not(blurred)
+        sketch = cv2.divide(gray, inverted_blur, scale=256.0)
+        result = cv2.cvtColor(sketch, cv2.COLOR_GRAY2BGR)
+    
+    elif style == 'cartoon':
+        # Works on color images directly
+        color = cv2.bilateralFilter(image, 9, 300, 300)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        gray = cv2.medianBlur(gray, 5)
+        edges = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 9)
+        result = cv2.bitwise_and(color, color, mask=edges)
+    
+    elif style == 'watercolor':
+        result = cv2.stylization(image, sigma_s=60, sigma_r=0.6)
+    
+    elif style == 'oil_painting':
+        result = cv2.edgePreservingFilter(image, flags=2, sigma_s=60, sigma_r=0.4)
+    
+    elif style == 'hdr':
+        result = cv2.detailEnhance(image, sigma_s=12, sigma_r=0.15)
+    
+    elif style == 'sepia':
+        kernel = np.array([[0.272, 0.534, 0.131],
+                          [0.349, 0.686, 0.168],
+                          [0.393, 0.769, 0.189]])
+        result = cv2.transform(image, kernel)
+        result = np.clip(result, 0, 255).astype(np.uint8)
+    
+    elif style == 'blur':
+        result = cv2.GaussianBlur(image, (15, 15), 0)
+    
+    elif style == 'edge':
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        edges = cv2.Canny(gray, 50, 150)
+        result = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+    
+    else:
+        # Default pencil sketch
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        inverted = cv2.bitwise_not(gray)
+        blurred = cv2.GaussianBlur(inverted, (21, 21), 0)
+        inverted_blur = cv2.bitwise_not(blurred)
+        sketch = cv2.divide(gray, inverted_blur, scale=256.0)
+        result = cv2.cvtColor(sketch, cv2.COLOR_GRAY2BGR)
+    
+    cv2.imwrite(output_path, result)
+    return output_path
+x
+
+¸
